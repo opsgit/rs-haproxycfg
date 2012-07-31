@@ -1,7 +1,7 @@
 # rs-haproxycfg
 Creates Haproxy configuration dynamically based on:
 
-+ Server Array instances
++ Server Array instances (based on Server Array id)
 + Servers within a deployment matching a nickname prefix. 
 
 Generated configuration can be printed to screen or saved directly to disk. When saving to disk a backup of configuration file is always created. Configuration file is not updated if configuration on disk is already the same as dynamically generated one. 
