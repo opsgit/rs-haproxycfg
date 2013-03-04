@@ -30,6 +30,9 @@ Generate configuration and save it to disk
 
 	bundle exec bin/rs-haproxycfg --array 123456789 --template templates/haproxy.cfg.example.erb --config /etc/haproxy/haproxy.cfg
 
+Include both array and deployment instances
+	bundle exec bin/rs-haproxycfg --print --array 123456789 --deployment 123456789 --nickname web --template templates/haproxy.cfg.example.erb
+
 ## License
 (The MIT License)
 

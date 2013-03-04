@@ -12,6 +12,7 @@ module Frontends
     end
 
     def instances
+      server_list = Array.new()
       if @deployment and @nickname
         # Searching instances from deployment is slow so we fetch all matching servers and filter them afterwards
         servers = Server.find_by(:nickname) { |n| n =~ /^#{@nickname}[0-9]+/ }
@@ -26,18 +27,23 @@ module Frontends
         deployment = instances.select { |i| i["deployment_href"].split('/').last == @deployment }
       
         # Unify resultset
-        deployment.map { |instance| { :nickname => sanitize_nickname(instance['nickname']), :private_ip_address => instance['private-ip-address'] } }
-      elsif @array
+        server_list = deployment.map { |instance| { :nickname => sanitize_nickname(instance['nickname']), :private_ip_address => instance['private-ip-address'] } }
+      end
+
+      if @array
         array = Ec2ServerArray.find(@array.to_i)
 
         # Only return operational and booting instances
         instances = array.instances.select {|i| i['state'] == 'operational' or i['state'] == 'booting' }
 
         # Unify & sanitize resultset
-        instances.map { |instance| { :nickname => sanitize_nickname(instance['nickname']), :private_ip_address => instance['private_ip_address'] } }
-      else
+        server_list = server_list + instances.map { |instance| { :nickname => sanitize_nickname(instance['nickname']), :private_ip_address => instance['private_ip_address'] } }
+      end
+
+      if !@deployment and !@nickname and !@array
         fail "No server array or deployment & nickname filters were given"
       end
+      return server_list
     end
     
     private
